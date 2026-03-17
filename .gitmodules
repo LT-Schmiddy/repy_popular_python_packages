@@ -1,0 +1,15 @@
+[submodule "syms/BanjoRecompSyms"]
+	path = syms/BanjoRecompSyms
+	url = https://github.com/BanjoRecomp/BanjoRecompSyms.git
+[submodule "syms/Zelda64RecompSyms"]
+	path = syms/Zelda64RecompSyms
+	url = https://github.com/Zelda64Recomp/Zelda64RecompSyms.git
+[submodule "syms/Starfox64RecompSyms"]
+	path = syms/Starfox64RecompSyms
+	url = https://github.com/sonicdcer/Starfox64RecompSyms.git
+[submodule "syms/MarioKart64RecompSyms"]
+	path = syms/MarioKart64RecompSyms
+	url = https://github.com/sonicdcer/MarioKart64RecompSyms.git
+[submodule "syms/Goemon64RecompSyms"]
+	path = syms/Goemon64RecompSyms
+	url = https://github.com/klorfmorf/Goemon64RecompSyms.git

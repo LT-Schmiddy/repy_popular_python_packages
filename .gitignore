@@ -1,0 +1,38 @@
+# Directories
+assets_extracted/
+binaries/
+build/
+build_tracy*/
+downloads/
+doxygen/
+test_env/
+OLD/
+venv*/
+thunderstore_packages/
+__pycache__/**
+
+# Files
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+user_build_config.json
+CMakeUserPresets.json
+./funcs.h
+patches.map
+
+# Entensions:
+*.d
+*.o
+*.elf
+*.bin
+# *.exe
+*.dll
+*.dylib
+*.so
+*.so.1.0
+*.lib
+*.pdb
+*.exp
+*.pyc
+*.thunderstore.zip
+*.nrm
