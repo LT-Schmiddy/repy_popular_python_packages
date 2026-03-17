@@ -1,0 +1,56 @@
+# Config file for an example Majora's Mask: Recompiled mod.
+
+# Fields that end up in the mod's manifest.
+[manifest]
+
+# The name that will show up for this mod in the mod menu. This should be human readable.
+display_name = "Tests for RecompExternalPython_API"
+
+# The description that will show up when this mod is displayed in the mod menu. This should be human readable.
+description =  """Tests for RecompExternalPython_API. Not for packaging."""
+
+# A short description that will show up in this mod's entry in the mod list. This should be human readable and kept short
+# to prevent it from being cut off due to the limited space.
+short_description = "Tests for RecompExternalPython_API. Not for packaging."
+
+# Authors of this mod.
+authors = [ "LT_Schmiddy" ]
+
+
+# Native libraries (e.g. DLLs) and the functions they export.
+native_libraries = [
+# Example native library:
+]
+
+[[manifest.config_options]]
+id = "print_success_cases"
+name = "Print Successful Test Cases"
+description = """
+Print successful test cases along with the failures.
+"""
+type = "Enum"
+options = [ "Off", "On"]
+default = "Off"
+
+[[manifest.config_options]]
+id = "save_case_count"
+name = "Save Test Case Count"
+description = """
+Save the number of test cases, and the number of successes, to a text file in the current working directory.
+"""
+type = "Enum"
+options = [ "Off", "On"]
+default = "Off"
+
+
+[[manifest.config_options]]
+id = "load_repl"
+name = "Enter REPL"
+description = """
+Enter the interactive shell after tests finish.
+
+Be advised that this will pause game execution until `exit()` is called.
+"""
+type = "Enum"
+options = [ "Off", "On"]
+default = "Off"
