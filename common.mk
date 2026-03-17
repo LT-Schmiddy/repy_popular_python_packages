@@ -7,10 +7,9 @@ WARNFLAGS := -Wall -Wextra -Wno-incompatible-library-redeclaration -Wno-unused-p
 			 -Wno-missing-braces -Wno-unsupported-floating-point-opt -Werror=section
 CFLAGS   := $(ARCHFLAGS) $(WARNFLAGS) -D_LANGUAGE_C -nostdinc -ffunction-sections
 CPPFLAGS := -DMIPS -DF3DEX_GBI_2 -DF3DEX_GBI_PL -DGBI_DOWHILE \
-			-I include -I include/mod -I include/mod/dummy_headers \
+			-I include -I include -I include/dummy_headers \
 			-I include/shared -I include_in_dependents -I $(TESTS_INCBIN_DIR) -idirafter include/mod/libc 
-LDFLAGS  := -nostdlib -T $(LDSCRIPT) --unresolved-symbols=ignore-all --emit-relocs -e 0 --no-nmagic -gc-sections \
-			-L lib -lgcc_vr4300
+LDFLAGS  := -nostdlib -T $(LDSCRIPT) --unresolved-symbols=ignore-all --emit-relocs -e 0 --no-nmagic -gc-sections
 
 rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 getdirs = $(sort $(dir $(1)))

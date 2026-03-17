@@ -30,9 +30,9 @@ cmake_build_groups: dict[str, dict[str, CMakeBuildJob]] = {}
 build_outputs: dict[str, BuildOutputJob] = {}
 thunderstore_packages: dict[str, ThunderstorePackageJob] = {}
 
-project_name = "RecompExternalPython_API"
+project_name = "REPY_PopularPythonPackages"
 project_tests_name = "Test_" + project_name
-project_version_string = "2.0.0"
+project_version_string = "1.0.0"
 
 mod_elf_path = mod_build_dir.joinpath("mod.elf")
 tests_elf_path = tests_build_dir.joinpath("tests.elf")
@@ -110,7 +110,9 @@ mod_toml_data = {
     "manifest": {
         "id": project_name,
         "version": project_version_string,
-        "dependencies": []
+        "dependencies": [
+            "RecompExternalPython_API:2.0.0"
+        ]
     },
     "inputs": {
         "elf_path": str(mod_elf_path),
@@ -160,23 +162,6 @@ if platform.system() == "Windows":
     make_mips_compiler_path = binaries_dir.joinpath("llvmmips_win/nrs_bin/clang.exe")
     make_mips_linker_path = binaries_dir.joinpath("llvmmips_win/nrs_bin/ld.lld.exe")
     mod_tool_path = binaries_dir.joinpath("llvmmips_win/nrs_bin/RecompModTool.exe")
-    
-    zig_download, zig_extraction = add_archive_download_and_extract(
-        "zig",
-        "https://ziglang.org/download/0.14.1/zig-x86_64-windows-0.14.1.zip",
-        binaries_dir.joinpath("zig_win")
-    )
-    zig_dir_path = binaries_dir.joinpath("zig_win/zig-x86_64-windows-0.14.1")
-    zig_bin_path = zig_dir_path.joinpath("zig.exe")
-    
-
-    llvm_download, llvm_extraction = add_archive_download_and_extract(
-        "llvm",
-        "https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.7/clang+llvm-19.1.7-x86_64-pc-windows-msvc.tar.xz",
-        binaries_dir.joinpath("llvm_win")
-    )
-    
-    llvm_path = binaries_dir.joinpath("llvm_win/clang+llvm-19.1.7-x86_64-pc-windows-msvc")
         
     
 elif platform.system() == "Darwin":
@@ -189,22 +174,6 @@ elif platform.system() == "Darwin":
     make_mips_linker_path = binaries_dir.joinpath("llvmmips_macos/nrs_bin/ld.lld")
     mod_tool_path = binaries_dir.joinpath("llvmmips_macos/nrs_bin/RecompModTool")
     
-    zig_download, zig_extraction = add_archive_download_and_extract(
-        "zig",
-        "https://ziglang.org/download/0.14.1/zig-aarch64-macos-0.14.1.tar.xz",
-        binaries_dir.joinpath("zig_macos")
-    )
-    zig_dir_path = binaries_dir.joinpath("zig_linux/zig-aarch64-macos-0.14.1")
-    zig_bin_path = zig_dir_path.joinpath("zig")
-    
-    
-    llvm_download, llvm_extraction = add_archive_download_and_extract(
-        "llvm",
-        "https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.7/LLVM-19.1.7-macOS-ARM64.tar.xz",
-        binaries_dir.joinpath("llvm_macos")
-    )
-    llvm_path = binaries_dir.joinpath("llvm_macos/LLVM-19.1.7-macOS-ARM64")
-    
 else:
     llvmmips_download, llvmmips_extraction = add_archive_download_and_extract(
         "llvmmips",
@@ -212,24 +181,6 @@ else:
         binaries_dir.joinpath("llvmmips_linux")
     )
     
-    make_mips_compiler_path = binaries_dir.joinpath("llvmmips_linux/nrs_bin/clang")
-    make_mips_linker_path = binaries_dir.joinpath("llvmmips_linux/nrs_bin/ld.lld")
-    mod_tool_path = binaries_dir.joinpath("llvmmips_linux/nrs_bin/RecompModTool")
-    
-    zig_download, zig_extraction = add_archive_download_and_extract(
-        "zig",
-        "https://ziglang.org/download/0.14.1/zig-x86_64-linux-0.14.1.tar.xz",
-         binaries_dir.joinpath("zig_linux")
-    )
-    zig_dir_path = binaries_dir.joinpath("zig_linux/zig-x86_64-linux-0.14.1")
-    zig_bin_path = binaries_dir.joinpath("zig")
-    
-    llvm_download, llvm_extraction = add_archive_download_and_extract(
-        "llvm",
-        "https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.7/LLVM-19.1.7-Linux-X64.tar.xz",
-        binaries_dir.joinpath("llvm_linux")
-    )
-    llvm_path = binaries_dir.joinpath("llvm_linux/LLVM-19.1.7-Linux-X64")
 
 python_version_string_nt = "python314t"
 python_version_string_posix = "python3.14t"
@@ -265,24 +216,24 @@ makefiles['mod'] = mod_makefile = MakefileJob(
         "_BUILD_DIR": str(mod_build_dir),
         "_MIPS_CC": str(make_mips_compiler_path),
         "_MIPS_LD": str(make_mips_linker_path),
-        "_SRC_DIR": "src/mod",
-        "_PY_BUILD_FLAGS": "-DRECOMP_PY_BUILD_MODE"
+        "_SRC_DIR": "src",
+        "_PY_BUILD_FLAGS": ""
     }
 )
 mod_makefile.depends_on([llvmmips_extraction])
 
-makefiles['tests'] = tests_makefile = MakefileJob(
-    root_dir.joinpath("mod_elf.mk"),
-    {
-        "_ELF_PATH": str(tests_elf_path),
-        "_BUILD_DIR": str(tests_build_dir),
-        "_MIPS_CC": str(make_mips_compiler_path),
-        "_MIPS_LD": str(make_mips_linker_path),
-        "_SRC_DIR": "src/tests",
-        "_PY_BUILD_FLAGS": ""
-    }
-)
-tests_makefile.depends_on([llvmmips_extraction])
+# makefiles['tests'] = tests_makefile = MakefileJob(
+#     root_dir.joinpath("mod_elf.mk"),
+#     {
+#         "_ELF_PATH": str(tests_elf_path),
+#         "_BUILD_DIR": str(tests_build_dir),
+#         "_MIPS_CC": str(make_mips_compiler_path),
+#         "_MIPS_LD": str(make_mips_linker_path),
+#         "_SRC_DIR": "src/tests",
+#         "_PY_BUILD_FLAGS": ""
+#     }
+# )
+# tests_makefile.depends_on([llvmmips_extraction])
 
 def add_toml_and_nrm_job(game_id: str, toml_type: str, build_dir: Path, data_dicts: list[dict], nrm_dependencies: list[JobBase], inject_files: dict[Path, Path] = None) -> tuple[GenerateTomlJob, ModToNRMJob]:
     global tomls, nrms
@@ -310,253 +261,29 @@ def populate_repy_api_file_injection(injections: dict[Path, Path], search_dir: P
             populate_repy_api_file_injection(injections, file_path, inject_path)
 
 repy_api_files = {}
-populate_repy_api_file_injection(repy_api_files, repy_api_src, Path("repy_api"))
+# populate_repy_api_file_injection(repy_api_files, repy_api_src, Path("repy_api"))
 
-mm_mod_toml, mm_mod_nrm = add_toml_and_nrm_job("mm", "mod", mod_build_dir, [mod_common_data, mm_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], repy_api_files)
-bk_mod_toml, bk_mod_nrm = add_toml_and_nrm_job("bk", "mod", mod_build_dir, [mod_common_data, bk_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], repy_api_files)
-sf64_mod_toml, sf64_mod_nrm = add_toml_and_nrm_job("sf64", "mod", mod_build_dir, [mod_common_data, sf64_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], repy_api_files)
-mk64_mod_toml, mk64_mod_nrm = add_toml_and_nrm_job("mk64", "mod", mod_build_dir, [mod_common_data, mk64_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], repy_api_files)
-mnsg_mod_toml, mnsg_mod_nrm = add_toml_and_nrm_job("mnsg", "mod", mod_build_dir, [mod_common_data, mnsg_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], repy_api_files)
-mm_tests_toml, mm_tests_nrm = add_toml_and_nrm_job("mm", "tests", tests_build_dir, [tests_common_data, mm_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
-bk_tests_toml, bk_tests_nrm = add_toml_and_nrm_job("bk", "tests", tests_build_dir, [tests_common_data, bk_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
-sf64_tests_toml, sf64_tests_nrm = add_toml_and_nrm_job("sf64", "tests", tests_build_dir, [tests_common_data, sf64_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
-mk64_tests_toml, mk64_tests_nrm = add_toml_and_nrm_job("mk64", "tests", tests_build_dir, [tests_common_data, mk64_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
-mnsg_tests_toml, mnsg_tests_nrm = add_toml_and_nrm_job("mnsg", "tests", tests_build_dir, [tests_common_data, mnsg_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
-
-# Extlib Compilation
-extlib_name = "RecompPythonNative"
-extlib = CMakeProjectConfig(
-    root_dir,
-    {
-        # Unlike with clangmips, we're gonna prepend the LLVM and ZIG directories to the PATH that CMake recieves.
-        "PATH": prepend_to_env_path([llvm_path.joinpath("bin"), zig_dir_path]),
-        "LIB_NAME": extlib_name,
-        "PYTHON_WIN_ARCHIVE": str(python_windows_download.download_path),
-        "PYTHON_MACOS_ARCHIVE": str(python_macos_download.download_path),
-        "PYTHON_LINUX_ARCHIVE": str(python_linux_download.download_path),
-        "PYTHON_ARCHIVE_VSTR_NT": python_version_string_nt,
-        "PYTHON_ARCHIVE_VSTR_POSIX": python_version_string_posix,
-    }
-)
-
-def get_preset_lib_path(preset_name: str) -> Path:
-    global root_dir
-    return root_dir.joinpath(f"build/{preset_name}/lib")
-
-def with_windows_dlls(preset_string: str, output_paths: dict[Path, Path]) -> dict[Path, Path]:
-    global root_dir
-    windows_dll_names = [
-        "libcrypto-3-x64.dll",
-        "libffi-8.dll",
-        "libssl-3-x64.dll",
-        "pyexpat.cp314t-win_amd64.pyd",
-        "select.cp314t-win_amd64.pyd",
-        "sqlite3.dll",
-        "tcl86t.dll",
-        "tk86t.dll",
-        "unicodedata.cp314t-win_amd64.pyd",
-        "winsound.cp314t-win_amd64.pyd",
-        "zlib1.dll",
-        "_asyncio.cp314t-win_amd64.pyd",
-        "_bz2.cp314t-win_amd64.pyd",
-        "_ctypes.cp314t-win_amd64.pyd",
-        "_ctypes_test.cp314t-win_amd64.pyd",
-        "_decimal.cp314t-win_amd64.pyd",
-        "_elementtree.cp314t-win_amd64.pyd",
-        "_hashlib.cp314t-win_amd64.pyd",
-        "_lzma.cp314t-win_amd64.pyd",
-        "_multiprocessing.cp314t-win_amd64.pyd",
-        "_overlapped.cp314t-win_amd64.pyd",
-        "_queue.cp314t-win_amd64.pyd",
-        "_remote_debugging.cp314t-win_amd64.pyd",
-        "_socket.cp314t-win_amd64.pyd",
-        "_sqlite3.cp314t-win_amd64.pyd",
-        "_ssl.cp314t-win_amd64.pyd",
-        "_testbuffer.cp314t-win_amd64.pyd",
-        "_testcapi.cp314t-win_amd64.pyd",
-        "_testclinic.cp314t-win_amd64.pyd",
-        "_testclinic_limited.cp314t-win_amd64.pyd",
-        "_testconsole.cp314t-win_amd64.pyd",
-        "_testimportmultiple.cp314t-win_amd64.pyd",
-        "_testinternalcapi.cp314t-win_amd64.pyd",
-        "_testlimitedcapi.cp314t-win_amd64.pyd",
-        "_testmultiphase.cp314t-win_amd64.pyd",
-        "_testsinglephase.cp314t-win_amd64.pyd",
-        "_tkinter.cp314t-win_amd64.pyd",
-        "_uuid.cp314t-win_amd64.pyd",
-        "_wmi.cp314t-win_amd64.pyd",
-        "_zoneinfo.cp314t-win_amd64.pyd",
-        "_zstd.cp314t-win_amd64.pyd"
-    ]
-    
-    python_dll_dir =  root_dir.joinpath(f"build/{preset_string}/python-standalone/python/install/DLLs")
-    
-    for file in [python_dll_dir.joinpath(i) for i in windows_dll_names]:
-        if file.suffix == ".dll":
-            output_paths[Path(file.name)] = file
-        elif file.suffix == ".pyd":
-            ## Doing it this way removed the python version pre-suffix.
-            output_paths[Path(file.with_suffix("").with_suffix(".dll").name)] = file
-            
-    return output_paths
-
-def native_preset_name(build_type: str):
-    if platform.system() == "Windows":
-        return f"native-windows-x64-{build_type}"
-    if platform.system() == "Darwin":
-        return f"native-macos-aarch64-{build_type}"
-    if platform.system() == "Linux":
-        return f"native-linux-x64-{build_type}"
-    
-def native_python_download():
-    if platform.system() == "Windows":
-        return python_windows_download
-    if platform.system() == "Darwin":
-        return python_macos_download
-    if platform.system() == "Linux":
-        return python_linux_download
-
-def native_output_files(build_type: str) -> dict[Path, Path]:
-    preset_name = native_preset_name(build_type)
-    if platform.system() == "Windows":
-        win_base = {
-            Path("python313.dll"): get_preset_lib_path(preset_name).joinpath(f"{python_version_string_nt}.dll"),
-            Path(f"{extlib_name}.dll"): get_preset_lib_path(preset_name).joinpath(f"{extlib_name}.dll")
-        }
-        if build_type == "Debug" or build_type == "RelWithDebInfo" or build_type == "TracyProfiling":
-            win_base[Path(f"{extlib_name}.pdb")] = get_preset_lib_path(preset_name).joinpath(f"{extlib_name}.pdb")
-        return with_windows_dlls(preset_name, win_base)
-    if platform.system() == "Darwin":
-        return {
-            Path(f"lib{python_version_string_posix}.dylib"): get_preset_lib_path(preset_name).joinpath(f"lib{python_version_string_posix}.dylib"),
-            Path(f"{extlib_name}.dylib"): get_preset_lib_path(preset_name).joinpath(f"{extlib_name}.dylib")
-        }
-    if platform.system() == "Linux":
-        return {
-            Path(f"lib{python_version_string_posix}.so.1.0"): get_preset_lib_path(preset_name).joinpath(f"lib{python_version_string_posix}.so.1.0"),
-            Path(f"{extlib_name}.so"): get_preset_lib_path(preset_name).joinpath(f"{extlib_name}.so")
-        }
-    
-cmake_default_build_group_name: str = "Debug"
-cmake_build_groups = {
-    "Debug" : {
-        "Windows": CMakeBuildJob.from_preset_pair(extlib, with_windows_dlls("zig-windows-x64-Debug", {
-                Path(f"{python_version_string_nt}.dll"): get_preset_lib_path("zig-windows-x64-Debug").joinpath(f"{python_version_string_nt}.dll"),
-                Path(f"{extlib_name}.dll"): get_preset_lib_path("zig-windows-x64-Debug").joinpath(f"{extlib_name}.dll"),
-                Path(f"{extlib_name}.pdb"): get_preset_lib_path("zig-windows-x64-Debug").joinpath(f"{extlib_name}.pdb")
-            }), "zig-windows-x64-Debug"),
-        "Darwin": CMakeBuildJob.from_preset_pair(extlib, {
-                Path(f"lib{python_version_string_posix}.dylib"): get_preset_lib_path("zig-macos-aarch64-Debug").joinpath(f"lib{python_version_string_posix}.dylib"),
-                Path(f"{extlib_name}.dylib"): get_preset_lib_path("zig-macos-aarch64-Debug").joinpath(f"{extlib_name}.dylib")
-            }, "zig-macos-aarch64-Debug"),
-        "Linux": CMakeBuildJob.from_preset_pair(extlib, {
-                Path(f"lib{python_version_string_posix}.so.1.0"): get_preset_lib_path("zig-linux-x64-Debug").joinpath(f"lib{python_version_string_posix}.so.1.0"),
-                Path(f"{extlib_name}.so"): get_preset_lib_path("zig-linux-x64-Debug").joinpath(f"{extlib_name}.so")
-            }, "zig-linux-x64-Debug"),
-    },
-    "Release" : {
-        "Windows": CMakeBuildJob.from_preset_pair(extlib, with_windows_dlls("zig-windows-x64-Release", {
-                 Path(f"{python_version_string_nt}.dll"): get_preset_lib_path("zig-windows-x64-Release").joinpath(f"{python_version_string_nt}.dll"),
-                Path(f"{extlib_name}.dll"): get_preset_lib_path("zig-windows-x64-Release").joinpath(f"{extlib_name}.dll")
-            }), "zig-windows-x64-Release"),
-        "Darwin": CMakeBuildJob.from_preset_pair(extlib, {
-                Path(f"lib{python_version_string_posix}.dylib"): get_preset_lib_path("zig-macos-aarch64-Release").joinpath(f"lib{python_version_string_posix}.dylib"),
-                Path(f"{extlib_name}.dylib"): get_preset_lib_path("zig-macos-aarch64-Release").joinpath(f"{extlib_name}.dylib")
-            }, "zig-macos-aarch64-Release"),
-        "Linux": CMakeBuildJob.from_preset_pair(extlib, {
-                Path(f"lib{python_version_string_posix}.so.1.0"): get_preset_lib_path("zig-linux-x64-Release").joinpath(f"lib{python_version_string_posix}.so.1.0"),
-                Path(f"{extlib_name}.so"): get_preset_lib_path("zig-linux-x64-Release").joinpath(f"{extlib_name}.so")
-            }, "zig-linux-x64-Release"),
-    }, 
-    "RelWithDebInfo": {
-        "Windows": CMakeBuildJob.from_preset_pair(extlib, with_windows_dlls("zig-windows-x64-RelWithDebInfo", {
-                Path(f"{python_version_string_nt}.dll"): get_preset_lib_path("zig-windows-x64-RelWithDebInfo").joinpath(f"{python_version_string_nt}.dll"),
-                Path(f"{extlib_name}.dll"): get_preset_lib_path("zig-windows-x64-RelWithDebInfo").joinpath(f"{extlib_name}.dll"),
-                Path(f"{extlib_name}.pdb"): get_preset_lib_path("zig-windows-x64-RelWithDebInfo").joinpath(f"{extlib_name}.pdb")
-            }), "zig-windows-x64-RelWithDebInfo"),
-        "Darwin": CMakeBuildJob.from_preset_pair(extlib, {
-                Path(f"lib{python_version_string_posix}.dylib"): get_preset_lib_path("zig-macos-aarch64-RelWithDebInfo").joinpath(f"lib{python_version_string_posix}.dylib"),
-                Path(f"{extlib_name}.dylib"): get_preset_lib_path("zig-macos-aarch64-RelWithDebInfo").joinpath(f"{extlib_name}.dylib")
-            }, "zig-macos-aarch64-RelWithDebInfo"),
-        "Linux": CMakeBuildJob.from_preset_pair(extlib, {
-                Path(f"lib{python_version_string_posix}.so.1.0"): get_preset_lib_path("zig-linux-x64-RelWithDebInfo").joinpath(f"lib{python_version_string_posix}.so.1.0"),
-                Path(f"{extlib_name}.so"): get_preset_lib_path("zig-linux-x64-RelWithDebInfo").joinpath(f"{extlib_name}.so")
-            }, "zig-linux-x64-RelWithDebInfo"),
-    },
-    "TracyProfiling": {
-        "Windows": CMakeBuildJob.from_preset_pair(extlib, with_windows_dlls("zig-windows-x64-TracyProfiling", {
-                Path(f"{python_version_string_nt}.dll"): get_preset_lib_path("zig-windows-x64-TracyProfiling").joinpath(f"{python_version_string_nt}.dll"),
-                Path(f"{extlib_name}.dll"): get_preset_lib_path("zig-windows-x64-TracyProfiling").joinpath(f"{extlib_name}.dll"),
-                Path(f"{extlib_name}.pdb"): get_preset_lib_path("zig-windows-x64-TracyProfiling").joinpath(f"{extlib_name}.pdb")
-            }), "zig-windows-x64-TracyProfiling"),
-        "Darwin": CMakeBuildJob.from_preset_pair(extlib, {
-                Path(f"lib{python_version_string_posix}.dylib"): get_preset_lib_path("zig-macos-aarch64-TracyProfiling").joinpath(f"lib{python_version_string_posix}.dylib"),
-                Path(f"{extlib_name}.dylib"): get_preset_lib_path("zig-macos-aarch64-TracyProfiling").joinpath(f"{extlib_name}.dylib")
-            }, "zig-macos-aarch64-TracyProfiling"),
-        "Linux": CMakeBuildJob.from_preset_pair(extlib, {
-                Path(f"lib{python_version_string_posix}.so.1.0"): get_preset_lib_path("zig-linux-x64-TracyProfiling").joinpath(f"lib{python_version_string_posix}.so.1.0"),
-                Path(f"{extlib_name}.so"): get_preset_lib_path("zig-linux-x64-TracyProfiling").joinpath(f"{extlib_name}.so")
-            }, "zig-linux-x64-TracyProfiling"),
-    },
-    
-    "MinSizeRel": {
-        "Windows": CMakeBuildJob.from_preset_pair(extlib, with_windows_dlls("zig-windows-x64-MinSizeRel", {
-                Path(f"{python_version_string_posix}.dll"): get_preset_lib_path("zig-windows-x64-MinSizeRel").joinpath(f"{python_version_string_posix}.dll"),
-                Path(f"{extlib_name}.dll"): get_preset_lib_path("zig-windows-x64-MinSizeRel").joinpath(f"{extlib_name}.dll")
-            }), "zig-windows-x64-MinSizeRel"),
-        "Darwin": CMakeBuildJob.from_preset_pair(extlib, {
-                Path(f"lib{python_version_string_posix}.dylib"): get_preset_lib_path("zig-macos-aarch64-MinSizeRel").joinpath(f"lib{python_version_string_posix}.dylib"),
-                Path(f"{extlib_name}.dylib"): get_preset_lib_path("zig-macos-aarch64-MinSizeRel").joinpath(f"{extlib_name}.dylib")
-            }, "zig-macos-aarch64-MinSizeRel"),
-        "Linux": CMakeBuildJob.from_preset_pair(extlib, {
-                Path(f"lib{python_version_string_posix}.so.1.0"): get_preset_lib_path("zig-linux-x64-MinSizeRel").joinpath(f"lib{python_version_string_posix}.so.1.0"),
-                Path(f"{extlib_name}.so"): get_preset_lib_path("zig-linux-x64-MinSizeRel").joinpath(f"{extlib_name}.so")
-            }, "zig-linux-x64-MinSizeRel"),
-    },
-    "native-Debug" : {
-        "Native": CMakeBuildJob.from_preset_pair(extlib, native_output_files("Debug"), native_preset_name("Debug")),
-    },
-    "native-Release" : {
-        "Native": CMakeBuildJob.from_preset_pair(extlib, native_output_files("Release"), native_preset_name("Release")),
-    },
-    "native-RelWithDebInfo": {
-        "Native": CMakeBuildJob.from_preset_pair(extlib, native_output_files("RelWithDebInfo"), native_preset_name("RelWithDebInfo")),
-    },
-    "native-TracyProfiling": {
-        "Native": CMakeBuildJob.from_preset_pair(extlib, native_output_files("TracyProfiling"), native_preset_name("TracyProfiling")),
-    },
-    "native-MinSizeRel": {
-        "Native": CMakeBuildJob.from_preset_pair(extlib, native_output_files("MinSizeRel"), native_preset_name("MinSizeRel")),
-    }
-}
-
-for group_key, group in cmake_build_groups.items():
-    for build_key, build in group.items():
-        if not group_key.startswith("native-"):
-            build.depends_on([archive_extractions["zig"]])
-            if build_key == "Windows":
-                build.depends_on([python_windows_download])
-            elif build_key == "Darwin":
-                build.depends_on([python_macos_download])
-            elif build_key == "Linux":
-                build.depends_on([python_linux_download])
-        else:
-            build.depends_on([native_python_download()])
-            
-        build.depends_on([archive_extractions["llvm"]])
-        
+mm_mod_toml, mm_mod_nrm = add_toml_and_nrm_job("mm", "ppp", mod_build_dir, [mod_common_data, mm_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], repy_api_files)
+bk_mod_toml, bk_mod_nrm = add_toml_and_nrm_job("bk", "ppp", mod_build_dir, [mod_common_data, bk_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], repy_api_files)
+sf64_mod_toml, sf64_mod_nrm = add_toml_and_nrm_job("sf64", "ppp", mod_build_dir, [mod_common_data, sf64_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], repy_api_files)
+mk64_mod_toml, mk64_mod_nrm = add_toml_and_nrm_job("mk64", "ppp", mod_build_dir, [mod_common_data, mk64_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], repy_api_files)
+mnsg_mod_toml, mnsg_mod_nrm = add_toml_and_nrm_job("mnsg", "ppp", mod_build_dir, [mod_common_data, mnsg_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], repy_api_files)
+# mm_tests_toml, mm_tests_nrm = add_toml_and_nrm_job("mm", "tests", tests_build_dir, [tests_common_data, mm_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
+# bk_tests_toml, bk_tests_nrm = add_toml_and_nrm_job("bk", "tests", tests_build_dir, [tests_common_data, bk_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
+# sf64_tests_toml, sf64_tests_nrm = add_toml_and_nrm_job("sf64", "tests", tests_build_dir, [tests_common_data, sf64_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
+# mk64_tests_toml, mk64_tests_nrm = add_toml_and_nrm_job("mk64", "tests", tests_build_dir, [tests_common_data, mk64_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
+# mnsg_tests_toml, mnsg_tests_nrm = add_toml_and_nrm_job("mnsg", "tests", tests_build_dir, [tests_common_data, mnsg_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
 
 def add_build_output(job_name: str, output_path: Path, dependencies: list[JobBase]) -> BuildOutputJob:
     build_outputs[job_name] = build_job = BuildOutputJob(root_dir.joinpath(output_path))
     build_job.depends_on(dependencies)
     return build_job
 
-cmake_debug_builds = [i for i in cmake_build_groups["Debug"].values()]
-add_build_output("zelda_debug", "test_env/zelda/mods", [mm_mod_nrm, mm_tests_nrm] + cmake_debug_builds)
-add_build_output("bk_debug", "test_env/bk/mods", [bk_mod_nrm, bk_tests_nrm] + cmake_debug_builds)
-add_build_output("sf64_debug", "test_env/sf64/mods", [sf64_mod_nrm, sf64_tests_nrm] + cmake_debug_builds)
-add_build_output("mk64_debug", "test_env/mk64/mods", [mk64_mod_nrm, mk64_tests_nrm] + cmake_debug_builds)
-add_build_output("mnsg_debug", "test_env/mnsg/mods", [mnsg_mod_nrm, mnsg_tests_nrm] + cmake_debug_builds)
+add_build_output("zelda_debug", "test_env/zelda/mods", [mm_mod_nrm])
+add_build_output("bk_debug", "test_env/bk/mods", [bk_mod_nrm])
+add_build_output("sf64_debug", "test_env/sf64/mods", [sf64_mod_nrm])
+add_build_output("mk64_debug", "test_env/mk64/mods", [mk64_mod_nrm])
+add_build_output("mnsg_debug", "test_env/mnsg/mods", [mnsg_mod_nrm])
 
 def package_url_from_git() -> str:
     result = subprocess.run(
@@ -594,12 +321,11 @@ def add_thunderstore_package(job_name: str, package_name: str, version_str: str,
     
     return package
 
-cmake_release_builds = [i for i in cmake_build_groups["Release"].values()]
-add_thunderstore_package("mm", "RecompExternalPython_for_Zelda64Recompiled", project_version_string, [mm_mod_nrm] + cmake_release_builds)
-add_thunderstore_package("bk", "RecompExternalPython_for_BanjoRecompiled", project_version_string, [bk_mod_nrm] + cmake_release_builds)
-add_thunderstore_package("sf64", "RecompExternalPython_for_Starfox64Recompiled", project_version_string, [sf64_mod_nrm] + cmake_release_builds)
-add_thunderstore_package("mk64", "RecompExternalPython_for_MarioKart64Recompiled", project_version_string, [mk64_mod_nrm] + cmake_release_builds)
-add_thunderstore_package("mnsg", "RecompExternalPython_for_Goemon64Recompiled", project_version_string, [mnsg_mod_nrm] + cmake_release_builds)
+add_thunderstore_package("mm", "RecompExternalPython_for_Zelda64Recompiled", project_version_string, [mm_mod_nrm])
+add_thunderstore_package("bk", "RecompExternalPython_for_BanjoRecompiled", project_version_string, [bk_mod_nrm])
+add_thunderstore_package("sf64", "RecompExternalPython_for_Starfox64Recompiled", project_version_string, [sf64_mod_nrm])
+add_thunderstore_package("mk64", "RecompExternalPython_for_MarioKart64Recompiled", project_version_string, [mk64_mod_nrm])
+add_thunderstore_package("mnsg", "RecompExternalPython_for_Goemon64Recompiled", project_version_string, [mnsg_mod_nrm])
 
 clean_paths: list[Path] = [
     build_dir
