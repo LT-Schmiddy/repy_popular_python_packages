@@ -13,3 +13,18 @@
 [submodule "syms/Goemon64RecompSyms"]
 	path = syms/Goemon64RecompSyms
 	url = https://github.com/klorfmorf/Goemon64RecompSyms.git
+[submodule "extern/websockets"]
+	path = extern/websockets
+	url = https://github.com/python-websockets/websockets
+[submodule "extern/pyyaml"]
+	path = extern/pyyaml
+	url = https://github.com/yaml/pyyaml
+[submodule "extern/schema"]
+	path = extern/schema
+	url = https://github.com/keleshev/schema
+[submodule "extern/typing_extensions"]
+	path = extern/typing_extensions
+	url = https://github.com/python/typing_extensions
+[submodule "extern/colorama"]
+	path = extern/colorama
+	url = https://github.com/tartley/colorama

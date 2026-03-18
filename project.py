@@ -253,21 +253,15 @@ def add_toml_and_nrm_job(game_id: str, toml_type: str, build_dir: Path, data_dic
 mod_common_data = toml.loads(root_dir.joinpath("mod_common.toml").read_text())
 tests_common_data = toml.loads(root_dir.joinpath("tests_common.toml").read_text())
 
-def populate_repy_api_file_injection(injections: dict[Path, Path], search_dir: Path, inject_root: Path):
-    for inject_path, file_path in [(inject_root.joinpath(i), search_dir.joinpath(i)) for i in os.listdir(search_dir)]:
-        if file_path.is_file():
-            injections[inject_path] = file_path
-        elif file_path.is_dir():
-            populate_repy_api_file_injection(injections, file_path, inject_path)
+from package_files import include_python_files
 
-repy_api_files = {}
 # populate_repy_api_file_injection(repy_api_files, repy_api_src, Path("repy_api"))
 
-mm_mod_toml, mm_mod_nrm = add_toml_and_nrm_job("mm", "ppp", mod_build_dir, [mod_common_data, mm_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], repy_api_files)
-bk_mod_toml, bk_mod_nrm = add_toml_and_nrm_job("bk", "ppp", mod_build_dir, [mod_common_data, bk_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], repy_api_files)
-sf64_mod_toml, sf64_mod_nrm = add_toml_and_nrm_job("sf64", "ppp", mod_build_dir, [mod_common_data, sf64_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], repy_api_files)
-mk64_mod_toml, mk64_mod_nrm = add_toml_and_nrm_job("mk64", "ppp", mod_build_dir, [mod_common_data, mk64_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], repy_api_files)
-mnsg_mod_toml, mnsg_mod_nrm = add_toml_and_nrm_job("mnsg", "ppp", mod_build_dir, [mod_common_data, mnsg_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], repy_api_files)
+mm_mod_toml, mm_mod_nrm = add_toml_and_nrm_job("mm", "ppp", mod_build_dir, [mod_common_data, mm_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], include_python_files)
+bk_mod_toml, bk_mod_nrm = add_toml_and_nrm_job("bk", "ppp", mod_build_dir, [mod_common_data, bk_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], include_python_files)
+sf64_mod_toml, sf64_mod_nrm = add_toml_and_nrm_job("sf64", "ppp", mod_build_dir, [mod_common_data, sf64_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], include_python_files)
+mk64_mod_toml, mk64_mod_nrm = add_toml_and_nrm_job("mk64", "ppp", mod_build_dir, [mod_common_data, mk64_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], include_python_files)
+mnsg_mod_toml, mnsg_mod_nrm = add_toml_and_nrm_job("mnsg", "ppp", mod_build_dir, [mod_common_data, mnsg_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], include_python_files)
 # mm_tests_toml, mm_tests_nrm = add_toml_and_nrm_job("mm", "tests", tests_build_dir, [tests_common_data, mm_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
 # bk_tests_toml, bk_tests_nrm = add_toml_and_nrm_job("bk", "tests", tests_build_dir, [tests_common_data, bk_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
 # sf64_tests_toml, sf64_tests_nrm = add_toml_and_nrm_job("sf64", "tests", tests_build_dir, [tests_common_data, sf64_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
