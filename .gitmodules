@@ -28,3 +28,6 @@
 [submodule "extern/colorama"]
 	path = extern/colorama
 	url = https://github.com/tartley/colorama
+[submodule "extern/python-certifi"]
+	path = extern/python-certifi
+	url = https://github.com/certifi/python-certifi

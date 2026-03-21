@@ -255,18 +255,11 @@ tests_common_data = toml.loads(root_dir.joinpath("tests_common.toml").read_text(
 
 from package_files import include_python_files
 
-# populate_repy_api_file_injection(repy_api_files, repy_api_src, Path("repy_api"))
-
 mm_mod_toml, mm_mod_nrm = add_toml_and_nrm_job("mm", "ppp", mod_build_dir, [mod_common_data, mm_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], include_python_files)
 bk_mod_toml, bk_mod_nrm = add_toml_and_nrm_job("bk", "ppp", mod_build_dir, [mod_common_data, bk_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], include_python_files)
 sf64_mod_toml, sf64_mod_nrm = add_toml_and_nrm_job("sf64", "ppp", mod_build_dir, [mod_common_data, sf64_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], include_python_files)
 mk64_mod_toml, mk64_mod_nrm = add_toml_and_nrm_job("mk64", "ppp", mod_build_dir, [mod_common_data, mk64_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], include_python_files)
 mnsg_mod_toml, mnsg_mod_nrm = add_toml_and_nrm_job("mnsg", "ppp", mod_build_dir, [mod_common_data, mnsg_toml_data, mod_toml_data], [archive_extractions["llvmmips"], makefiles['mod']], include_python_files)
-# mm_tests_toml, mm_tests_nrm = add_toml_and_nrm_job("mm", "tests", tests_build_dir, [tests_common_data, mm_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
-# bk_tests_toml, bk_tests_nrm = add_toml_and_nrm_job("bk", "tests", tests_build_dir, [tests_common_data, bk_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
-# sf64_tests_toml, sf64_tests_nrm = add_toml_and_nrm_job("sf64", "tests", tests_build_dir, [tests_common_data, sf64_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
-# mk64_tests_toml, mk64_tests_nrm = add_toml_and_nrm_job("mk64", "tests", tests_build_dir, [tests_common_data, mk64_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
-# mnsg_tests_toml, mnsg_tests_nrm = add_toml_and_nrm_job("mnsg", "tests", tests_build_dir, [tests_common_data, mnsg_toml_data, tests_toml_data], [archive_extractions["llvmmips"], makefiles['tests']])
 
 def add_build_output(job_name: str, output_path: Path, dependencies: list[JobBase]) -> BuildOutputJob:
     build_outputs[job_name] = build_job = BuildOutputJob(root_dir.joinpath(output_path))
