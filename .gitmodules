@@ -31,3 +31,6 @@
 [submodule "extern/python-certifi"]
 	path = extern/python-certifi
 	url = https://github.com/certifi/python-certifi
+[submodule "extern/pypng"]
+	path = extern/pypng
+	url = https://gitlab.com/drj11/pypng.git

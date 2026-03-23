@@ -6,11 +6,14 @@ root_dir = Path(__file__).parent
 # Including individual files:
 schema_src_dir = root_dir.joinpath("./extern/schema")
 typing_extensions_src_dir = root_dir.joinpath("./extern/typing_extensions/src")
+pypng_src_dir = root_dir.joinpath("./extern/pypng/code")
+
 include_python_files: dict[Path, Path] = {
     # Including single files
     # Modules
     Path("schema.py"): schema_src_dir.joinpath("schema.py"),
     Path("typing_extensions.py"): typing_extensions_src_dir.joinpath("typing_extensions.py"),
+    Path("png.py"): pypng_src_dir.joinpath("png.py"),
 }
 
 include_suffixes = [".py", ".pem"]
