@@ -34,3 +34,6 @@
 [submodule "extern/pypng"]
 	path = extern/pypng
 	url = https://gitlab.com/drj11/pypng.git
+[submodule "syms/Dk64Syms"]
+	path = syms/Dk64Syms
+	url = https://github.com/Rainchus/Dk64Syms
